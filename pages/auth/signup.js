@@ -9,14 +9,39 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({ email, password });
-    setLoading(false);
-    if (error) setError(error.message);
-    else router.push('/dashboard');
-  };
+     const handleSignUp = async (e) => {
+     e.preventDefault();
+     setLoading(true);
+-    const { error } = await supabase.auth.signUp({ email, password });
+-    setLoading(false);
+-    if (error) {
+-      setError(error.message);
+-    } else {
+-      router.push('/dashboard');
+-    }
++    // Erst registrieren…
++    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
++      email,
++      password
++    });
++    if (signUpError) {
++      setError(signUpError.message);
++      setLoading(false);
++      return;
++    }
++    // …und direkt einloggen
++    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
++      email,
++      password
++    });
++    setLoading(false);
++    if (signInError) {
++      setError(signInError.message);
++    } else {
++      router.push('/dashboard');
++    }
+   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

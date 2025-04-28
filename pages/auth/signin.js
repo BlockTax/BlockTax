@@ -9,14 +9,27 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signIn({ email, password });
-    setLoading(false);
-    if (error) setError(error.message);
-    else router.push('/dashboard');
-  };
+     const handleSignIn = async (e) => {
+     e.preventDefault();
+     setLoading(true);
+-    const { error } = await supabase.auth.signIn({ email, password });
++    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
++      email,
++      password
++    });
+     setLoading(false);
+-    if (error) {
+-      setError(error.message);
+-    } else {
+-      router.push('/dashboard');
+-    }
++    if (signInError) {
++      setError(signInError.message);
++    } else {
++      router.push('/dashboard');
++    }
+   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
